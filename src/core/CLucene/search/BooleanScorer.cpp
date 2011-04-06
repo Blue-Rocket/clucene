@@ -15,7 +15,7 @@
 CL_NS_USE(util)
 CL_NS_DEF(search)
 
-   BooleanScorer::BooleanScorer(Similarity* similarity, int32_t minNrShouldMatch ):
+   BooleanScorer::BooleanScorer(Similarity* similarity, int32_t minNrShouldMatch, const bool isTakingOwnership ):
     Scorer(similarity),
     scorers(NULL),
     maxCoord(1),
@@ -25,7 +25,8 @@ CL_NS_DEF(search)
 	minNrShouldMatch(minNrShouldMatch),
     requiredMask(0),
     prohibitedMask(0),
-	coordFactors(NULL)
+	coordFactors(NULL),
+    isTakingOwnership(isTakingOwnership)
   {
     bucketTable = _CLNEW BucketTable(this);
   }
@@ -125,8 +126,7 @@ CL_NS_DEF(search)
       requiredMask |= mask;			  // update required mask
 
     //scorer, HitCollector, and scorers is delete in the SubScorer
-    scorers = _CLNEW SubScorer(scorer, required, prohibited,
-    bucketTable->newCollector(mask), scorers);
+    scorers = _CLNEW SubScorer(scorer, required, prohibited, bucketTable->newCollector(mask), scorers, isTakingOwnership);
   }
 
   void BooleanScorer::computeCoordFactors(){
@@ -191,12 +191,13 @@ CL_NS_DEF(search)
 
 
 
-  BooleanScorer::SubScorer::SubScorer(Scorer* scr, const bool r, const bool p, HitCollector* c, SubScorer* nxt):
+  BooleanScorer::SubScorer::SubScorer(Scorer* scr, const bool r, const bool p, HitCollector* c, SubScorer* nxt, const bool o):
       scorer(scr),
       required(r),
       prohibited(p),
       collector(c),
-      next(nxt)
+      next(nxt),
+      hasOwnership(o)
   {
   //Func - Constructor
   //Pre  - scr != NULL,
@@ -221,7 +222,9 @@ CL_NS_DEF(search)
 		_CLDELETE(ptr);
 		ptr = next;
 	}
-	_CLDELETE(scorer);
+	if (hasOwnership) {
+		_CLDELETE(scorer);
+	}
 	_CLDELETE(collector);
   }
 
