@@ -13,6 +13,7 @@
 #include "CLucene/debug/_condition.h"
 #include "CLucene/util/StringBuffer.h"
 #include "CLucene/util/Misc.h"
+ #include "CLucene/_SharedHeader.h"
 
 #include "CLucene/store/RAMDirectory.h"
 #include "CLucene/store/Lock.h"
