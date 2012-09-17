@@ -125,7 +125,7 @@ DocumentsWriter::~DocumentsWriter(){
   if (this->postingsFreeListDW.values){
       if (this->postingsFreeCountDW < this->postingsFreeListDW.length) {
           memset(this->postingsFreeListDW.values + this->postingsFreeCountDW
-              , NULL
+              , 0
               , sizeof(Posting*));
       }
       postingsFreeListDW.deleteUntilNULL();
