@@ -200,7 +200,15 @@ void TermVectorsReader::get(const int32_t docNum, const TCHAR* field, TermVector
 TermFreqVector* TermVectorsReader::get(const int32_t docNum, const TCHAR* field){
 	// Check if no term vectors are available for this segment at all
 	ParallelArrayTermVectorMapper* mapper = _CLNEW ParallelArrayTermVectorMapper();
-	get(docNum, field, (TermVectorMapper*)mapper);
+    try
+    {
+	    get(docNum, field, (TermVectorMapper*)mapper);
+    }
+    catch(...)
+    {
+        _CLLDELETE(mapper);
+        throw;
+    }
 
 	TermFreqVector* ret = mapper->materializeVector();
 	_CLLDELETE(mapper);

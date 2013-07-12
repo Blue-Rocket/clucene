@@ -63,6 +63,8 @@ void testIWmergePhraseSegments(CuTest *tc){
 	_CLDELETE(query1);
 	_CLDELETE(hits0);
 	_CLDELETE(hits1);
+
+    dir->close();
 	_CLDECDELETE(dir);
 }
 

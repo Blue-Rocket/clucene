@@ -1043,7 +1043,7 @@ bool SegmentReader::hasNorms(const TCHAR* field){
     this->termVectorsReaderOrig = NULL;
     this->cfsReader = NULL;
     this->storeCFSReader = NULL;
-    this->singleNormStream = NULL;
+    _CLDELETE( this->singleNormStream );
 
     return clone;
   }

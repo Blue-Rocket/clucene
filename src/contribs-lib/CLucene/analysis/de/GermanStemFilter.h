@@ -34,6 +34,8 @@ public:
      */
     GermanStemFilter(TokenStream* in, bool deleteTS, CL_NS(analysis)::CLTCSetList* exclusionSet);
 
+    virtual ~GermanStemFilter();
+
     /**
      * @return  Returns the next token in the stream, or null at EOS
      */

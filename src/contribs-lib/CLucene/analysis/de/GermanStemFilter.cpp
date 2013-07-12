@@ -27,6 +27,11 @@ CL_NS_USE2(analysis,de)
       this->exclusionSet = exclusionSet;
     }
 
+    GermanStemFilter::~GermanStemFilter()
+    {
+        _CLDELETE(stemmer);
+    }
+
     Token* GermanStemFilter::next(Token* t) {
       if (input->next(t) == NULL) {
         return NULL;
@@ -38,6 +43,7 @@ CL_NS_USE2(analysis,de)
         if (_tcscmp(s, t->termBuffer()) != 0) {
           t->setText(s);
         }
+        _CLDELETE_ARRAY(s);
         return t;
       }
     }

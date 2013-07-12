@@ -54,6 +54,12 @@ CL_NS_DEF2(analysis,standard)
             {
             }
 
+            virtual ~SavedStreams()
+            {
+                //_CLDELETE(tokenStream); // This will be deleted with the filteredTokenStream
+                _CLDELETE(filteredTokenStream);
+            }
+
             void close(){}
             Token* next(Token* token) {return NULL;}
         };

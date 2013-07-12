@@ -74,13 +74,31 @@ CL_NS_USE(util);
     }
     virtual void close() {
     }
+    virtual void reset()
+    {
+        tokenUpto = 0;
+    }
  };
 
   class MyAnalyzer : public CL_NS(analysis)::Analyzer {
   public:
-      virtual TokenStream* tokenStream(const TCHAR* fieldName, Reader* reader) {
+    virtual TokenStream* tokenStream(const TCHAR* fieldName, Reader* reader) {
         return _CLNEW MyTokenStream();
-      }
+    }
+    virtual TokenStream* reusableTokenStream(const TCHAR* /*fieldName*/, CL_NS(util)::Reader* /* reader */)
+    {
+	    MyTokenStream* tokenStream = static_cast<MyTokenStream*>(getPreviousTokenStream());
+	    if (tokenStream == NULL) 
+        {
+		    tokenStream = _CLNEW MyTokenStream();
+		    setPreviousTokenStream(tokenStream);
+	    }
+        else
+        {
+		    tokenStream->reset();
+        }
+	    return tokenStream;
+    }
   };
 
   class MyIndexWriter : public IndexWriter {
@@ -109,7 +127,7 @@ CL_NS_USE(util);
     }
   };
 
-  void setUp() {
+  void testSetUp(CuTest* tc) {
 
     tokens.clear();
     std::sort(testTerms.begin(), testTerms.end(), MyTCharCompare());
@@ -167,6 +185,25 @@ CL_NS_USE(util);
     fieldInfos = _CLNEW FieldInfos(&dir, tmp.c_str());
   }
 
+  void testTearDown(CuTest* tc)
+  {
+      for (std::vector<const TCHAR*>::size_type i = 0; i < testTerms.size(); i++) 
+      {
+          for (int j = 0; j < TERM_FREQ; j++)
+          {
+            _CLLDELETE(offsets[i][j]);
+          }
+      }
+      positions.clear();
+      offsets.clear();
+
+      for( int t = 0; t < tokens.size(); t++ )
+      {
+          _CLLDELETE(tokens[t]);
+      }
+      tokens.clear();
+      _CLDELETE( fieldInfos );
+  }
 
   void test(CuTest* tc) {
     //Check to see the files were created properly in setup
@@ -193,6 +230,7 @@ CL_NS_USE(util);
         const TCHAR* term = (*terms)[i];
         CuAssertStrEquals(tc, _T(""), testTerms[i], (TCHAR*)term, false);
       }
+      _CLDELETE(vector);
     }
   }
 
@@ -234,6 +272,9 @@ CL_NS_USE(util);
       const TCHAR* term = (*terms)[i];
       CuAssertStrEquals(tc, _T(""), testTerms[i], (TCHAR*)term, false);
     }
+
+    _CLDELETE(freqVector);
+    _CLDELETE(vector);
   }
 
   class DocNumAwareMapper : public TermVectorMapper {
@@ -295,6 +336,8 @@ CL_NS_USE(util);
         CuAssertTrue(tc, termVectorOffsetInfo->equals(offsets[i][j]), _T("Term vector offset info not equal!"));
       }
     }
+
+    _CLDELETE(vector);
   }
 
   //void testMapper(CuTest* tc) {
@@ -453,7 +496,7 @@ CL_NS_USE(util);
 CuSuite *testTermVectorsReader(void) {
   CuSuite *suite = CuSuiteNew(_T("CLucene TermVectorsReader Test"));
 
-  setUp();
+  SUITE_ADD_TEST(suite, testSetUp);
 
   SUITE_ADD_TEST(suite, test);
   SUITE_ADD_TEST(suite, testTermVectorsReader);
@@ -461,6 +504,8 @@ CuSuite *testTermVectorsReader(void) {
   SUITE_ADD_TEST(suite, testOffsetReader);
   //SUITE_ADD_TEST(suite, testMapper);
   SUITE_ADD_TEST(suite, testBadParams);
+
+  SUITE_ADD_TEST(suite, testTearDown);
 
   return suite;
 }

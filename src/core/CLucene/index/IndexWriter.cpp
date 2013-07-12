@@ -226,6 +226,7 @@ void IndexWriter::init(Directory* d, Analyzer* a, const bool create, const bool 
       _CLTHROWA(CL_ERR_LockObtainFailed, (string("Index locked for write: ") + writeLock->getObjectName()).c_str() );
   } catch (...) {
     deinit(hasLock);
+    _CLLDELETE(writeLock);
     throw;
   }
 
@@ -939,7 +940,10 @@ void IndexWriter::updatePendingMerges(int32_t maxNumSegmentsOptimize, bool optim
   if (spec != NULL) {
     const int32_t numMerges = spec->merges->size();
     for(int32_t i=0;i<numMerges;i++)
-      registerMerge((*spec->merges)[i]);
+    {
+       if( ! registerMerge((*spec->merges)[i]))
+           _CLLDELETE((*spec->merges)[i]);
+    }
   }
   _CLDELETE(spec);
 }
@@ -2255,6 +2259,7 @@ void IndexWriter::applyDeletes(bool flushedNewSegment) {
           reader->doCommit();
         } _CLFINALLY (
           reader->doClose();
+          _CLDELETE(reader);
         )
       }
     )

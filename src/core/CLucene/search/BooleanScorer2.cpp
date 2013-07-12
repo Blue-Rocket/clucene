@@ -621,6 +621,7 @@ void BooleanScorer2::score( HitCollector* hc )
 			si++;
 		}
 		bs->score( hc );
+        _CLLDELETE(bs);
 	} else {
 		if ( _internal->countingSumScorer == NULL ) {
 			_internal->initCountingSumScorer();

@@ -504,7 +504,7 @@ void FSDirectory::FSIndexInput::readInternal(uint8_t* b, const int32_t len) {
 		dir = DIRECTORIES.get(file);
 		if ( dir == NULL  ){
       dir = _CLNEW FSDirectory();
-      dir->init(_file,lockFactory);
+      dir->init(file,lockFactory);
 			DIRECTORIES.put( dir->directory.c_str(), dir);
 		} else {
 			if ( lockFactory != NULL && lockFactory != dir->getLockFactory() ) {

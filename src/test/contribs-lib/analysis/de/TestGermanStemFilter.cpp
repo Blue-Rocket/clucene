@@ -17,7 +17,7 @@ CL_NS_USE(analysis)
 CL_NS_USE2(analysis,de)
 
   void check(CuTest* tc, const TCHAR* input, const TCHAR* expected) {
-    StandardTokenizer* tokenStream = new StandardTokenizer(new StringReader(input));
+    StandardTokenizer* tokenStream = new StandardTokenizer(new StringReader(input), true);
     GermanStemFilter filter(tokenStream, true);
     Token t;
     if (filter.next(&t) == NULL)

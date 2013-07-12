@@ -12,19 +12,44 @@
 
 CL_NS_DEF(search)
 
+class MockScorerCounters
+{
+public:
+    int32_t nextCalls;
+    int32_t skipToCalls;
+    int32_t scoreHitCollectorCalls;
+    int32_t scoreCalls;
+
+    MockScorerCounters() : nextCalls(0), skipToCalls(0), scoreHitCollectorCalls(0), scoreCalls(0)
+    {}
+};
+
 class MockScorer : public Scorer
 {
 public:
 
     MockScorer(Similarity* similarity) :
-      Scorer(similarity), nextCalls(0), skipToCalls(0), scoreHitCollectorCalls(0), scoreCalls(0)
+      Scorer(similarity)
     {
-        /* empty */
+        pCounters = _CLNEW MockScorerCounters();
+        deleteCounters = true;
+    }
+
+    MockScorer(Similarity* similarity, MockScorerCounters * _pCounters) :
+      Scorer(similarity), pCounters(_pCounters)
+    {
+        deleteCounters = false;
+    }
+
+    virtual ~MockScorer()
+    {
+        if( deleteCounters )
+            _CLDELETE(pCounters);
     }
 
     virtual bool next()
     {
-        nextCalls++;
+        pCounters->nextCalls++;
         return false;
     }
 
@@ -35,7 +60,7 @@ public:
 
     virtual bool skipTo(int32_t target)
     {
-        skipToCalls++;
+        pCounters->skipToCalls++;
         return true;
     }
 
@@ -51,41 +76,39 @@ public:
 
     virtual float_t score()
     {
-        scoreCalls++;
+        pCounters->scoreCalls++;
         return 0;
     }
 
     virtual void score(HitCollector* hc)
     {
-        scoreHitCollectorCalls++;
+        pCounters->scoreHitCollectorCalls++;
     }
 
     int32_t getNextCalls() const
     {
-        return nextCalls;
+        return pCounters->nextCalls;
     }
 
     int32_t getSkipToCalls() const
     {
-        return skipToCalls;
+        return pCounters->skipToCalls;
     }
 
     int32_t getScoreCalls() const
     {
-        return scoreCalls;
+        return pCounters->scoreCalls;
     }
 
     int32_t getScoreHitCollectorCalls() const
     {
-        return scoreHitCollectorCalls;
+        return pCounters->scoreHitCollectorCalls;
     }
 
 private:
+    MockScorerCounters * pCounters;
+    bool deleteCounters;
 
-    int32_t nextCalls;
-    int32_t skipToCalls;
-    int32_t scoreHitCollectorCalls;
-    int32_t scoreCalls;
 };
 
 CL_NS_END
