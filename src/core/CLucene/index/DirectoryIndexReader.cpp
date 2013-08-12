@@ -274,6 +274,9 @@ CL_NS_DEF(index)
    */
   void DirectoryIndexReader::startCommit() {
     if (segmentInfos != NULL) {
+      if (rollbackSegmentInfos != NULL) {
+        _CLDELETE(rollbackSegmentInfos);
+      }
       rollbackSegmentInfos = segmentInfos->clone();
     }
     rollbackHasChanges = hasChanges;
