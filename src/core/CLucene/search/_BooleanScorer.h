@@ -33,9 +33,10 @@ CL_NS_DEF(search)
 			Scorer* scorer;
 			bool required;
 			bool prohibited;
+			const bool hasOwnership;
 			HitCollector* collector;
 			SubScorer* next;
-			SubScorer(Scorer* scr, const bool r, const bool p, HitCollector* c, SubScorer* nxt);
+			SubScorer(Scorer* scr, const bool r, const bool p, HitCollector* c, SubScorer* nxt, const bool o);
 			virtual ~SubScorer();
 		};
 
@@ -73,6 +74,7 @@ CL_NS_DEF(search)
 		Bucket* current;
 		
 		int32_t minNrShouldMatch;
+		bool isTakingOwnership;
 		
 	public:
 		LUCENE_STATIC_CONSTANT(int32_t,BucketTable_SIZE=1024);
@@ -80,7 +82,7 @@ CL_NS_DEF(search)
 		int32_t prohibitedMask;
 		float_t* coordFactors;
 
-    	BooleanScorer( Similarity* similarity, int32_t minNrShouldMatch = 1 );
+    	BooleanScorer( Similarity* similarity, int32_t minNrShouldMatch = 1, const bool isTakingOwnership = true );
 		virtual ~BooleanScorer();
 		void add(Scorer* scorer, const bool required, const bool prohibited);
 		int32_t doc() const { return current->doc; }

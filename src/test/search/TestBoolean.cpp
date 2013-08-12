@@ -179,6 +179,43 @@ void testBooleanScorer2WithProhibitedScorer(CuTest* tc) {
     CuAssertIntEquals(tc, _T("Unexpected calls of next()!"), 1, counters.nextCalls);
 }
 
+void testBooleanScorer2WithSubScorers(CuTest* tc) {
+
+    const int maxOptinalScorers = 5;
+    const int maxProhibitedScorers = 5;
+
+    CL_NS(search)::DefaultSimilarity similarity;
+    BooleanScorer2 scorer(&similarity, 0, true);
+
+    CLVector<MockScorer *> prohibitedScorers(false), optionalScorers(false);
+    prohibitedScorers.resize(maxProhibitedScorers);
+    optionalScorers.resize(maxOptinalScorers);
+
+    for (int i = 0; i < maxProhibitedScorers; i++) {
+        prohibitedScorers[i] = _CLNEW MockScorer(&similarity);
+        scorer.add(prohibitedScorers[i], false, true);
+    }
+
+    for (int i = 0; i < maxOptinalScorers; i++) {
+        optionalScorers[i] = _CLNEW MockScorer(&similarity);
+        scorer.add(optionalScorers[i], false, false);
+    }
+
+    CL_NS(search)::MockHitCollector* collector = _CLNEW CL_NS(search)::MockHitCollector;
+    scorer.score(collector);
+
+    for (int i = 0; i < maxProhibitedScorers; i++) {
+        CuAssertIntEquals(tc, _T("Unexpected calls of next()!"), 1, prohibitedScorers[i]->getNextCalls());
+    }
+
+    for (int i = 0; i < maxOptinalScorers; i++) {
+        CuAssertIntEquals(tc, _T("Unexpected calls of next()!"), 1, optionalScorers[i]->getNextCalls());
+    }
+
+    _CLLDELETE(collector);
+
+}
+
 CuSuite *testBoolean(void)
 {
     CuSuite *suite = CuSuiteNew(_T("CLucene Boolean Tests"));
@@ -189,6 +226,7 @@ CuSuite *testBoolean(void)
     SUITE_ADD_TEST(suite, testBooleanScorer);
 
     SUITE_ADD_TEST(suite, testBooleanPrefixQuery);
+    SUITE_ADD_TEST(suite, testBooleanScorer2WithSubScorers);
     SUITE_ADD_TEST(suite, testBooleanScorer2WithProhibitedScorer);
 
     //_CrtSetBreakAlloc(1179);
