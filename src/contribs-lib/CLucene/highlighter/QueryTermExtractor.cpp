@@ -56,7 +56,13 @@ CL_NS_USE(index)
             {
                 Term * term = (Term *)(*iter);
                 if ( fieldName == NULL || term->field() == fieldName )
-                    terms->insert(_CLNEW WeightedTerm(query->getBoost(), term->text()));
+				{
+					// adapted from mailing list 2014-05-03 ([CLucene-dev] FW: Memory leak in QueryTermExtractor::getTerms)
+					// optimistic insert, assume most of the case element is not in so prevent searching first
+					WeightedTerm* pWeigthedTerm = _CLNEW WeightedTerm(query->getBoost(), term->text());
+					if ( !terms->insert(pWeigthedTerm).second )
+						_CLDELETE(pWeigthedTerm);
+				}
                 _CLLDECDELETE( term );
             }
         }
