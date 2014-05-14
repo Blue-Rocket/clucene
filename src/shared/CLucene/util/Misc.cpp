@@ -31,7 +31,7 @@
 
 #include <cctype>
 #include <limits.h>
-#include "CLucene/util/dirent.h" //if we have dirent, then the native one will be used
+#include "CLucene/util/_dirent.h" //if we have dirent, then the native one will be used
 
 //for zlib...
 #include "zlib.h"
