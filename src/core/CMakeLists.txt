@@ -252,13 +252,13 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/CLuceneConfig.cmake" "
     set(CLUCENE_SOVERSION ${CLUCENE_SOVERSION})
 ")
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CLuceneConfig.cmake"
-        DESTINATION ${LIB_DESTINATION}/CLuceneConfig.cmake)
+        DESTINATION %%DATADIR%%)
 
 # install pkg-config file
 IF(NOT WIN32)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libclucene-core.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libclucene-core.pc @ONLY)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libclucene-core.pc
-          DESTINATION ${LIB_DESTINATION}/pkgconfig )
+          DESTINATION libdata/pkgconfig )
 ENDIF(NOT WIN32)
 
 
@@ -272,9 +272,6 @@ IF ( LUCENE_SYS_INCLUDES )
             COMPONENT development)
 ELSE ( LUCENE_SYS_INCLUDES )
     install(FILES ${clucene-shared_BINARY_DIR}/CLucene/clucene-config.h 
-            DESTINATION include/CLucene
-            COMPONENT development)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CLuceneConfig.cmake 
             DESTINATION include/CLucene
             COMPONENT development)
 ENDIF ( LUCENE_SYS_INCLUDES )

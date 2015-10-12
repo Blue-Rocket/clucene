@@ -219,9 +219,8 @@ CL_NS_USE(util)
 		_CLDECDELETE(handle);
 
 		//printf("handle=%d\n", handle->__cl_refcount);
-		if ( dounlock ){
-			mutex->unlock();
-		}else{
+		mutex->unlock();
+		if ( !dounlock ) {
 			delete mutex;
 		}
 	}

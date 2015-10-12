@@ -53,7 +53,6 @@ const int32_t IndexWriter::DEFAULT_MERGE_FACTOR = LogMergePolicy::DEFAULT_MERGE_
 
 DEFINE_MUTEX(IndexWriter::MESSAGE_ID_LOCK)
 int32_t IndexWriter::MESSAGE_ID = 0;
-const int32_t IndexWriter::MAX_TERM_LENGTH = DocumentsWriter::MAX_TERM_LENGTH;
 
 class IndexWriter::Internal{
 public:
@@ -1396,7 +1395,7 @@ bool IndexWriter::doFlush(bool _flushDocStores) {
     // Check if the doc stores must be separately flushed
     // because other segments, besides the one we are about
     // to flush, reference it
-    if (_flushDocStores && (!flushDocs || docWriter->getSegment().compare(docWriter->getDocStoreSegment())!=0 )) {
+    if (_flushDocStores && (!flushDocs || docWriter->getSegment().compare(docWriter->getDocStoreSegment()) != 0)) {
       // We must separately flush the doc store
       if (infoStream != NULL)
         message("  flush shared docStore segment " + docStoreSegment);
@@ -1635,7 +1634,7 @@ bool IndexWriter::commitMerge(MergePolicy::OneMerge* _merge) {
         // Load deletes present @ start of merge, for this segment:
         BitVector previousDeletes(previousInfo->dir, previousInfo->getDelFileName().c_str());
 
-        if (currentInfo->getDelFileName().compare(previousInfo->getDelFileName())!=0 ){
+        if (currentInfo->getDelFileName().compare(previousInfo->getDelFileName()) != 0) {
           // This means this segment has had new deletes
           // committed since we started the merge, so we
           // must merge them:
@@ -1932,7 +1931,7 @@ void IndexWriter::_mergeInit(MergePolicy::OneMerge* _merge) {
       mergeDocStores = true;
     else if (lastDocStoreSegment.empty())
       lastDocStoreSegment = docStoreSegment;
-    else if (lastDocStoreSegment.compare(docStoreSegment)!=0 )
+    else if (lastDocStoreSegment.compare(docStoreSegment) != 0)
       mergeDocStores = true;
 
     // Segments' docScoreOffsets must be in-order,

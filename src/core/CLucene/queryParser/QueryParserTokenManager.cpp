@@ -15,9 +15,9 @@
 
 CL_NS_DEF(queryParser)
 
-const int64_t QueryParserTokenManager::jjbitVec2[]={0x0L, 0x0L, _ILONGLONG(0xffffffffffffffff), _ILONGLONG(0xffffffffffffffff)};
+const int64_t QueryParserTokenManager::jjbitVec2[]={0x0L, 0x0L, int64_t(_ILONGLONG(0xffffffffffffffff)), int64_t(_ILONGLONG(0xffffffffffffffff))};
 const int64_t QueryParserTokenManager::jjbitVec0[] = {
-	_ILONGLONG(0xfffffffffffffffe), _ILONGLONG(0xffffffffffffffff), _ILONGLONG(0xffffffffffffffff), _ILONGLONG(0xffffffffffffffff)
+	int64_t(_ILONGLONG(0xfffffffffffffffe)), int64_t(_ILONGLONG(0xffffffffffffffff)), int64_t(_ILONGLONG(0xffffffffffffffff)), int64_t(_ILONGLONG(0xffffffffffffffff))
 };
 const int32_t QueryParserTokenManager::jjnextStates[]={
 		15, 17, 18, 29, 32, 23, 33, 30, 20, 21, 32, 23, 33, 31, 34, 27,
@@ -546,7 +546,8 @@ int32_t QueryParserTokenManager::jjMoveNfa_3(const int32_t startState, int32_t c
 		++curPos;
 		i = jjnewStateCnt;
 		jjnewStateCnt = startsAt;
-		if (i == (startsAt = 36 - jjnewStateCnt))
+		startsAt = 36 - jjnewStateCnt;
+		if (i == startsAt)
 			return curPos;
 		try { curChar = input_stream->readChar(); }
 		catch(CLuceneError& e) {
@@ -760,7 +761,8 @@ int32_t QueryParserTokenManager::jjMoveNfa_1(const int32_t startState, int32_t c
 		++curPos;
 		i = jjnewStateCnt;
 		jjnewStateCnt = startsAt;
-		if (i == (startsAt = 7 - jjnewStateCnt))
+		startsAt = 7 - jjnewStateCnt;
+		if (i == startsAt)
 			return curPos;
 		try { curChar = input_stream->readChar(); }
 		catch(CLuceneError& e) {
@@ -860,7 +862,8 @@ int32_t QueryParserTokenManager::jjMoveNfa_0(const int32_t startState, int32_t c
 		++curPos;
 		i = jjnewStateCnt;
 		jjnewStateCnt = startsAt;
-		if (i == (startsAt = 3 - jjnewStateCnt))
+		startsAt = 3 - jjnewStateCnt;
+		if (i == startsAt)
 			return curPos;
 		try { curChar = input_stream->readChar(); }
 		catch(CLuceneError& e) {
@@ -1074,7 +1077,8 @@ int32_t QueryParserTokenManager::jjMoveNfa_2(const int32_t startState, int32_t c
 		++curPos;
 		i = jjnewStateCnt;
 		jjnewStateCnt = startsAt;
-		if (i == (startsAt = 7 - jjnewStateCnt))
+		startsAt = 7 - jjnewStateCnt;
+		if (i == startsAt)
 			return curPos;
 		try { curChar = input_stream->readChar(); }
 		catch(CLuceneError& e) {
