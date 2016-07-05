@@ -23,6 +23,8 @@ CL_NS_DEF(search)
 	class CLUCENE_EXPORT PrefixQuery: public Query {
 	private:
 		CL_NS(index)::Term* prefix;
+		static int max_expansions;
+		static int max_expansion_factor;
 	protected:
 		PrefixQuery(const PrefixQuery& clone);
 	public:
@@ -39,6 +41,21 @@ CL_NS_DEF(search)
 
 		/** Returns the prefix of this query. */
 		CL_NS(index)::Term* getPrefix(bool pointer=true);
+
+		/**
+		 * Sets the max number of expansions performed per prefix.
+		 * It is quite a good idea to add this limit, as otherwise the query will crash if more than
+		 * 1024 clauses are generated for the OR'ed boolean query.
+		 */
+		static void set_max_expansions(int max_expansions);
+
+		/**
+		 * Determines how much longer an actual token compared to the given prefix may be in order to
+		 * use it for expansion.
+		 *
+		 * A token will only be used if it is less or equal to length(prefix) * max_expansion_factor
+		 */
+		static void set_max_expansion_factor(int max_expansion_factor);
 
     Query* combine(CL_NS(util)::ArrayBase<Query*>* queries);
 		Query* rewrite(CL_NS(index)::IndexReader* reader);
