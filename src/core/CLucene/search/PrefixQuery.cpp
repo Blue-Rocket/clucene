@@ -20,6 +20,9 @@ CL_NS_USE(util)
 CL_NS_USE(index)
 CL_NS_DEF(search)
 
+  int PrefixQuery::max_expansions = -1;
+  int PrefixQuery::max_expansion_factor = -1;
+
   PrefixQuery::PrefixQuery(Term* Prefix){
   //Func - Constructor.
   //       Constructs a query for terms starting with prefix
@@ -85,7 +88,16 @@ CL_NS_DEF(search)
 		return ret;
   }
 
-   Query* PrefixQuery::rewrite(IndexReader* reader){
+  void PrefixQuery::set_max_expansions(int max_expansions) {
+      PrefixQuery::max_expansions = max_expansions;
+  }
+
+  void PrefixQuery::set_max_expansion_factor(int max_expansion_factor) {
+      PrefixQuery::max_expansion_factor = max_expansion_factor;
+  }
+
+
+  Query* PrefixQuery::rewrite(IndexReader* reader){
     BooleanQuery* query = _CLNEW BooleanQuery( true );
     TermEnum* enumerator = reader->terms(prefix);
     Term* lastTerm = NULL;
@@ -95,6 +107,7 @@ CL_NS_DEF(search)
       const TCHAR* tmp;
       size_t i;
       size_t prefixLen = prefix->textLength();
+      int expansions_left = max_expansions;
       do {
         lastTerm = enumerator->term();
         if (lastTerm != NULL &&
@@ -105,6 +118,11 @@ CL_NS_DEF(search)
           size_t termLen = lastTerm->textLength();
           if ( prefixLen>termLen )
             break; //the prefix is longer than the term, can't be matched
+
+          if (max_expansion_factor > 0 && prefixLen * max_expansion_factor < termLen) {
+              // If the term length is longer than N times the given prefix, we skip this expansion
+              break;
+          }
 
           tmp = lastTerm->text();
 
@@ -121,10 +139,13 @@ CL_NS_DEF(search)
           TermQuery* tq = _CLNEW TermQuery(lastTerm);	  // found a match
           tq->setBoost(getBoost());                // set the boost
           query->add(tq,true,false, false);		  // add to query
+          if (expansions_left > 0) {
+              expansions_left--;
+          }
         } else
           break;
 		_CLDECDELETE(lastTerm);
-      } while (enumerator->next());
+      } while (enumerator->next() && expansions_left != 0);
     }_CLFINALLY(
       enumerator->close();
 	  _CLDELETE(enumerator);
@@ -186,10 +207,7 @@ CL_NS_DEF(search)
   }
 
 
-
-
-
-//todo: this needs to be exposed, but java is still a bit confused about how...
+        //todo: this needs to be exposed, but java is still a bit confused about how...
 class PrefixFilter::PrefixGenerator{
   const Term* prefix;
 public:
