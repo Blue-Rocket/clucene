@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/Blue-Rocket/clucene.git",
   					 :tag => s.version.to_s, :submodules => true }
 
-  s.libraries		= 'stdc++'
+  s.libraries		= 'stdc++', 'z'
   s.compiler_flags	= '-Wmost',
   					  '-fvisibility=default', '-fPIC', '-D_UCS2', '-D_UNICODE', '-D_REENTRANT',
   					  '-DNDEBUG'
