@@ -15,8 +15,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '5.1'
   s.osx.deployment_target = '10.7'
 
-  s.source       = { :git => "https://github.com/Blue-Rocket/clucene.git",
-  					 :tag => s.version.to_s, :submodules => true }
+  s.source       = { :git => "https://github.com/Blue-Rocket/clucene.git", :tag => s.version.to_s }
 
   s.libraries		= 'c++', 'z'
   s.compiler_flags	= '-Wmost',
