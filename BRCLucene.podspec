@@ -18,15 +18,13 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/Blue-Rocket/clucene.git",
   					 :tag => s.version.to_s, :submodules => true }
 
-  s.libraries		= 'stdc++', 'z'
+  s.libraries		= 'c++', 'z'
   s.compiler_flags	= '-Wmost',
   					  '-fvisibility=default', '-fPIC', '-D_UCS2', '-D_UNICODE', '-D_REENTRANT',
   					  '-DNDEBUG'
 
   s.xcconfig		= {
-  						'CLANG_CXX_LANGUAGE_STANDARD' => 'gnu++98',
-  						'CLANG_CXX_LIBRARY' => 'libstdc++',
-  						'OTHER_LDFLAGS' => '-stdlib=libstdc++',
+  						'GCC_PREPROCESSOR_DEFINITIONS' => '_WCHAR_H_CPLUSPLUS_98_CONFORMANCE_',
   					  }
 
   s.requires_arc = false
