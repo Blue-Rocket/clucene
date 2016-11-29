@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "BRCLucene"
-  s.version      = "1.0.0"
+  s.version      = "0.1.0"
   s.summary      = "CLucene as a Pod"
   s.description  = <<-DESC
                    This project provides provides a pod for the
